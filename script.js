@@ -69,6 +69,22 @@ window.onload = function() {
         permittedAccessAction = '+';
     }
 
+    document.getElementById("btn_op_div").onclick = function() {
+        if (currentDocumentContent === '') {return;}
+        permittedAccessAction = '/'
+
+    }
+
+    document.getElementById("btn_op_minus").onclick = function() {
+        if (currentDocumentContent === '') {return;}
+
+        if (incomingContribution != '') {
+            processAccessAction(permittedAccessAction);
+        }
+
+        permittedAccessAction = '-';
+    }
+
     document.getElementById("btn_op_sign").onclick = function() {
         handleUnaryOperation(operand => -operand);
     }
@@ -97,22 +113,6 @@ window.onload = function() {
 
     document.getElementById("btn_op_backspace").onclick = function() {
         handleUnaryOperation(operand => operand.slice(0, - 1))
-    }
-
-    document.getElementById("btn_op_div").onclick = function() {
-        if (currentDocumentContent === '') {return;}
-        permittedAccessAction = '/'
-
-    }
-
-    document.getElementById("btn_op_minus").onclick = function() {
-        if (currentDocumentContent === '') {return;}
-
-        if (incomingContribution != '') {
-            processAccessAction(permittedAccessAction);
-        }
-
-        permittedAccessAction = '-';
     }
 
     document.getElementById("btn_op_clear").onclick = function() {
@@ -153,15 +153,18 @@ window.onload = function() {
 
         processAccessAction(permittedAccessAction)
 
-        activeDocumentView.innerHTML = currentDocumentContent
+        activeDocumentView.innerHTML = finalDocumentContent
     }
 
-    const accessRights = ["Просмотр", "Комментирование", "Редактирование", "Скачивание", "Управление доступом"];
-
+    const accessRights = ["П", "К", "Р", "С", "УД"];
     document.getElementById("btn_check_perm").onclick = function() {
         handleUnaryOperation(bitMask => {
-            if (bitMask > 31) {
+            if (bitMask < 0 || bitMask > 31) {
                 return "Некорректный ввод";
+            }
+
+            if (bitMask == 0) {
+                return "Нет прав";
             }
 
             let res = [];
@@ -175,7 +178,7 @@ window.onload = function() {
                 bitValue = bitValue << 1;
             }
 
-            return res;
+            return res.join(' ');
         })
     }
 
