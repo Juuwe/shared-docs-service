@@ -1,0 +1,24 @@
+{
+  "name": "shared-docs-service",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Juuwe/shared-docs-service#readme",
+  "bugs": {
+    "url": "https://github.com/Juuwe/shared-docs-service/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Juuwe/shared-docs-service.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1"
+  }
+}
