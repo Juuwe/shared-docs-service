@@ -10,26 +10,30 @@ export class ProductCardComponent {
     return `
         <div class="card border-0 rounded-0 product-card" id="card-${data.id}"
              style="width: 230px; background: #f5f3f0; overflow: hidden; display: flex; flex-direction: column;">
-
             <div class="card-body d-flex justify-content-center align-items-center" style="height: 280px; flex-grow: 1;">
                 <div class="shadow-sm p-2" style="width: 160px; height: 220px; background: white; border: 1px solid #eee; overflow: hidden;">
                     <div style="font-size: 4px; line-height: 6px; color: #ccc; text-align: left;">
-                        ${'LOREM IPSUM DOLOR SIT AMET '.repeat(60)}
+                        ${'LOREM IPSUM '.repeat(60)}
                     </div>
                 </div>
             </div>
-
             <div class="card-footer bg-white border-top p-3 w-100">
                 <div class="d-flex align-items-center mb-1">
-                    <img src="${data.src}" width="24" height="24" class="me-2" alt="type-icon">
-                    <h6 class="card-title text-truncate mb-0" style="font-size: 0.9rem; font-weight: 600;" title="${data.title}">
+                    <img src="${data.src}" width="20" height="20" class="me-2" alt="icon">
+                    <h6 class="card-title text-truncate mb-0" style="font-size: 0.85rem; font-weight: 600;" title="${data.title}">
                         ${data.title}
                     </h6>
-
-                    <div id="delete-container-${data.id}" class="ms-auto"></div>
                 </div>
 
-                <div id="btn-container-${data.id}" class="hover-button d-flex justify-content-center w-100"></div>
+                <div class="d-flex justify-content-between mb-3" style="font-size: 0.7rem; color: #999;">
+                    <span><i class="bi bi-file-earmark-code"></i> ${data.size}</span>
+                    <span><i class="bi bi-shield-check"></i> ${data.owner}</span>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <div id="delete-container-${data.id}"></div>
+                    <div id="btn-container-${data.id}" class="ms-auto"></div>
+                </div>
             </div>
         </div>
     `;

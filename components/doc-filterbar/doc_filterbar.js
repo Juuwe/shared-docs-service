@@ -7,7 +7,7 @@ export class DocFilterbarComponent {
     return `
             <div class="row g-2">
             <div class="col-md-8">
-                <input type="text" id="search-input" class="form-control" placeholder="Поиск по названию...">
+                <input type="text" id="search-input" class="form-control" placeholder="Поиск по названию, тегам...">
             </div>
             <div class="col-md-4">
                 <select id="filter-select" class="form-select">

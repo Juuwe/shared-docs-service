@@ -2,6 +2,8 @@ import { ProductCardComponent } from '../../components/product-card/index.js';
 import { DocumentPage } from '../document/document.js';
 import { AddDocComponent } from '../../components/add-doc-button/add_doc_button.js';
 import { DocFilterbarComponent } from '../../components/doc-filterbar/doc_filterbar.js'; // Не забудь импорт!
+import { areTagsIdentical } from '../../utils/helpers/tag-search.js';
+import { merge } from '../../utils/helpers/merger.js';
 
 export class MainPage {
   constructor(parent) {
@@ -28,21 +30,18 @@ export class MainPage {
     return [
       {
         id: 1,
-        src: 'static/img/docx.png',
         title: 'РПЗ.docx',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        tags: ['iu5', 'report'],
       },
       {
         id: 2,
-        src: 'static/img/pdf.png',
-        title: 'Титул КР БД.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        title: 'Титул, финальный.pdf', // Название с запятой
+        tags: ['important', 'iu5'],
       },
       {
         id: 3,
-        src: 'static/img/pdf.png',
-        title: 'ИУ5-41Б_Паронько_ТЗ_2026.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        title: 'Заметки.txt',
+        tags: ['draft'],
       },
     ];
   }
@@ -60,14 +59,14 @@ export class MainPage {
     const filterbar = new DocFilterbarComponent(document.getElementById('toolbar-container'));
 
     filterbar.render(
-        (query) => {
-            this.searchQuery = query;
-            this.renderCards(); // Перерисовываем только карточки
-        },
-        (ext) => {
-            this.filterExtension = ext;
-            this.renderCards(); // Перерисовываем только карточки
-        }
+      (query) => {
+        this.searchQuery = query;
+        this.renderCards(); // Перерисовываем только карточки
+      },
+      (ext) => {
+        this.filterExtension = ext;
+        this.renderCards(); // Перерисовываем только карточки
+      }
     );
 
     this.renderCards();
@@ -81,8 +80,17 @@ export class MainPage {
     const displayData = this.getFilteredData();
 
     displayData.forEach((item) => {
+      const systemLayer = {
+        size: '128 KB',
+        owner: 'iu5-student',
+        title: 'ЗАПАСНОЙ_ЗАГОЛОВОК', // Будет проигнорирован, т.к. в item уже есть title
+      };
+
+      // 3. Смешиваем! (Задача №2)
+      const cardData = merge(item, systemLayer);
+
       const card = new ProductCardComponent(container);
-      card.render(item, this.clickCard.bind(this), (id) => this.deleteCard(id));
+      card.render(cardData, this.clickCard.bind(this), (id) => this.deleteCard(id));
     });
 
     // const addBtnContainer = document.getElementById('add-btn-container');
@@ -112,16 +120,29 @@ export class MainPage {
   }
 
   getFilteredData() {
-    return this.cardsData.filter(item => {
-        // 1. Поиск (приводим всё к нижнему регистру для честности)
-        const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+    return this.cardsData.filter((item) => {
+      // 1. Фильтр по расширению (стандартный для твоего toolbar)
+      const extension = item.title.split('.').pop().toLowerCase();
+      const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
 
-        // 2. Фильтрация по расширению
-        // Предполагаем, что расширение — это всё, что после точки
-        const extension = item.title.split('.').pop().toLowerCase();
-        const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
+      // Если строка поиска пустая — оставляем только фильтр по расширению
+      if (!this.searchQuery.trim()) return matchesFilter;
 
-        return matchesSearch && matchesFilter;
+      // Готовим поисковые теги (даже если слово одно)
+      const searchTags = this.searchQuery
+        .toLowerCase()
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t !== '');
+
+      // 2. СНАЧАЛА проверяем полное совпадение состава тегов (Задача №1 - Map + While)
+      const matchesTags = areTagsIdentical(item.tags || [], searchTags);
+
+      // 3. ЗАТЕМ проверяем вхождение строки в название документа
+      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+      // Документ проходит, если совпал фильтр расширения И (совпали теги ИЛИ совпало название)
+      return matchesFilter && (matchesTags || matchesSearch);
     });
-}
+  }
 }
