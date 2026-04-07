@@ -8,7 +8,7 @@ import { merge } from '../../utils/helpers/merger.js';
 export class MainPage {
   constructor(parent) {
     this.parent = parent;
-    this.cardsData = this.getData();
+    this.cardsData = getData();
     this.searchQuery = '';
     this.filterExtension = 'all';
   }
@@ -26,26 +26,6 @@ export class MainPage {
         `;
   }
 
-  getData() {
-    return [
-      {
-        id: 1,
-        title: 'РПЗ.docx',
-        tags: ['iu5', 'report'],
-      },
-      {
-        id: 2,
-        title: 'Титул, финальный.pdf', // Название с запятой
-        tags: ['important', 'iu5'],
-      },
-      {
-        id: 3,
-        title: 'Заметки.txt',
-        tags: ['draft'],
-      },
-    ];
-  }
-
   clickCard(e) {
     const cardId = e.target.dataset.id;
 
@@ -56,8 +36,12 @@ export class MainPage {
   render() {
     this.parent.innerHTML = this.getHTML();
 
-    const filterbar = new DocFilterbarComponent(document.getElementById('toolbar-container'));
+    window.getData().then((data) => {
+      this.cardsData = data; // Сохраняем данные в класс для фильтрации
+      this.renderCards();
+    });
 
+    const filterbar = new DocFilterbarComponent(document.getElementById('toolbar-container'));
     filterbar.render(
       (query) => {
         this.searchQuery = query;
@@ -68,8 +52,6 @@ export class MainPage {
         this.renderCards(); // Перерисовываем только карточки
       }
     );
-
-    this.renderCards();
   }
 
   renderCards() {

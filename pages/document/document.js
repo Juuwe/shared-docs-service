@@ -2,6 +2,7 @@ import { DocumentComponent } from '../../components/document/document.js';
 import { DocumentHeaderComponent } from '../../components/document/document-header.js';
 import { BackButtonComponent } from '../../components/back-button/index.js';
 import { MainPage } from '../main/index.js';
+import { ThreeComponent } from '../../components/three/three-component.js';
 
 export class DocumentPage {
   constructor(parent, id) {
@@ -11,18 +12,6 @@ export class DocumentPage {
 
   get pageRoot() {
     return document.getElementById('document-page-root');
-  }
-
-  getData() {
-    return [
-      {
-        id: 1,
-        src: 'static/img/docx.png',
-        title: 'РПЗ.docx',
-        text: 'Содержание пояснительной записки...',
-      },
-      { id: 2, src: 'static/img/pdf.png', title: 'Титул.pdf', text: 'Текст титульного листа...' },
-    ];
   }
 
   getHTML() {
@@ -36,7 +25,7 @@ export class DocumentPage {
   }
 
   clickBack() {
-    document.body.style.backgroundColor = 'white'
+    document.body.style.backgroundColor = 'white';
     const mainPage = new MainPage(this.parent);
     mainPage.render();
   }
@@ -52,16 +41,28 @@ export class DocumentPage {
     const backBtn = new BackButtonComponent(backBtnContainer);
     backBtn.render(this.clickBack.bind(this));
 
-    const data = this.getData();
-    const currentDocData = data.find(item => item.id == this.id);
+    window.getData().then((allData) => {
+      const currentDocData = allData.find((item) => item.id == this.id);
+      if (currentDocData) {
+        this.renderContent(currentDocData);
+      }
+    });
+  }
 
+  renderContent(data) {
     const docHeaderContainer = document.getElementById('doc-header-container');
-    const docHeader = new DocumentHeaderComponent(docHeaderContainer);
-    docHeader.render(currentDocData);
-
+    new DocumentHeaderComponent(docHeaderContainer).render(data);
 
     const docContainer = document.getElementById('document-container');
-    const doc = new DocumentComponent(docContainer);
-    doc.render(currentDocData);
+
+    if (data.is3D) {
+      // Используем наш новый 3D вьювер
+      const threeD = new ThreeComponent(docContainer);
+      threeD.render(data);
+    } else {
+      // Стандартный текстовый документ
+      const doc = new DocumentComponent(docContainer);
+      doc.render(data);
+    }
   }
 }
