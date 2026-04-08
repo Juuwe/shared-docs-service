@@ -90,8 +90,16 @@ body {
     user-select: none;
 }
 
+.btn-calc:active {
+    filter: brightness(90%);
+}
+
 .btn-calc:hover {
     background: var(--btn-calc-default-hover);
+}
+
+.btn-calc.primary:hover {
+    background: var(--btn-calc-primary-hover);
 }
 
 .btn-calc.primary {
@@ -114,9 +122,6 @@ body {
     height: 40px
 }
 
-.btn-calc.primary:hover {
-    background: var(--btn-calc-primary-hover);
-}
 
 .btn-calc.execute:hover {
     background: var(--btn-calc-equal-hover);
