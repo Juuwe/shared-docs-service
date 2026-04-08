@@ -1,7 +1,7 @@
-import { ButtonComponent } from '../../components/button/index.js';
-import { DeleteDocComponent } from '../del-doc-button/del_doc_button.js';
+import { FrwDocDetailBtn } from '../frwd-detail-button/ForwardDocButton.js';
+import { DeleteDocButton } from '../del-doc-button/DeleteDocButton.js';
 
-export class ProductCardComponent {
+export class DocumentCardComponent {
   constructor(parent) {
     this.parent = parent;
   }
@@ -35,21 +35,16 @@ export class ProductCardComponent {
     `;
   }
 
-  //   <h5 class="card-title text-truncate w-100">${data.title}</h5>
-  //                 <p class="card-text small text-muted text-truncate w-100">${data.text}</p>
-  //<img src="${data.src}" width="20" style="position: absolute; top: 5px; right: 5px;"></img>
-  //                 <div id="btn-container-${data.id}" class="hover-button w-100"></div>
-
-  render(data, listener, deleteListener) {
-    const html = this.getHTML(data);
+  render(docData, forwardListener, deleteListener) {
+    const html = this.getHTML(docData);
     this.parent.insertAdjacentHTML('beforeend', html);
 
-    const btnContainer = document.getElementById(`btn-container-${data.id}`);
-    const button = new ButtonComponent(btnContainer);
-    button.render({ id: data.id, text: 'Перейти' }, listener);
+    const frwdBtnContainer = docData.getElementById(`btn-container-${docData.id}`);
+    const frwdBtn = new FrwDocDetailBtn(frwdBtnContainer);
+    frwdBtn.render({ id: docData.id, text: 'Перейти' }, forwardListener);
 
-    const delBtnContainer = document.getElementById(`delete-container-${data.id}`);
-    const delBtn = new DeleteDocComponent(delBtnContainer);
-    delBtn.render(data.id, deleteListener);
+    const delBtnContainer = docData.getElementById(`delete-container-${docData.id}`);
+    const delBtn = new DeleteDocButton(delBtnContainer);
+    delBtn.render(docData.id, deleteListener);
   }
 }

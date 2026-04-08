@@ -1,7 +1,7 @@
 import { DocumentComponent } from '../../components/document/document.js';
 import { DocumentHeaderComponent } from '../../components/document/document-header.js';
 import { BackButtonComponent } from '../../components/back-button/index.js';
-import { MainPage } from '../main/index.js';
+import { DocumentListPage } from '../doc-list/DocumentList.js';
 
 export class DocumentPage {
   constructor(parent, id) {
@@ -37,7 +37,7 @@ export class DocumentPage {
 
   clickBack() {
     document.body.style.backgroundColor = 'white'
-    const mainPage = new MainPage(this.parent);
+    const mainPage = new DocumentListPage(this.parent);
     mainPage.render();
   }
 

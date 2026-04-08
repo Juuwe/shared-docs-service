@@ -1,4 +1,4 @@
-export class ButtonComponent {
+export class FrwDocDetailBtn {
   constructor(parent) {
     this.parent = parent;
   }

@@ -1,4 +1,4 @@
-import { MainPage } from "./pages/main/index.js";
+import { MainPage } from "./pages/doc-list/DocumentList.js";
 import { HeaderComponent } from './components/header/header.js';
 
 

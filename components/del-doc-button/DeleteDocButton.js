@@ -1,4 +1,4 @@
-export class DeleteDocComponent {
+export class DeleteDocButton {
   constructor(parent) {
     this.parent = parent;
   }

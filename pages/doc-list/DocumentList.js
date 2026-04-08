@@ -1,12 +1,12 @@
-import { ProductCardComponent } from '../../components/product-card/index.js';
-import { DocumentPage } from '../document/document.js';
-import { AddDocComponent } from '../../components/add-doc-button/add_doc_button.js';
-import { DocFilterbarComponent } from '../../components/doc-filterbar/doc_filterbar.js'; // Не забудь импорт!
+import { DocumentCardComponent } from '../../components/doc-card/DocumentCard.js';
+import { DocumentPage } from '../doc-detail/Document.js';
+import { AddDocButton } from '../../components/add-doc-button/AddDocButton.js';
+import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFilterbar.js';
 
-export class MainPage {
+export class DocumentListPage {
   constructor(parent) {
     this.parent = parent;
-    this.cardsData = this.getData();
+    this.docCardsData = this.getData();
     this.searchQuery = '';
     this.filterExtension = 'all';
   }
@@ -81,12 +81,12 @@ export class MainPage {
     const displayData = this.getFilteredData();
 
     displayData.forEach((item) => {
-      const card = new ProductCardComponent(container);
+      const card = new DocumentCardComponent(container);
       card.render(item, this.clickCard.bind(this), (id) => this.deleteCard(id));
     });
 
     // const addBtnContainer = document.getElementById('add-btn-container');
-    const addButton = new AddDocComponent(container);
+    const addButton = new AddDocButton(container);
 
     // Передаем метод добавления, привязав контекст (bind),
     // чтобы внутри него this указывал на MainPage

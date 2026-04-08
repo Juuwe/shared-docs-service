@@ -1,4 +1,4 @@
-export class AddDocComponent {
+export class AddDocButton {
   constructor(parent) {
     this.parent = parent;
   }
