@@ -70,17 +70,14 @@ export class HeaderComponent {
           try {
             await window.addModelToDB(modelData);
 
-            // Перезагружаем главную страницу
             const root = document.getElementById('root');
             const mainPage = new DocumentListPage(root);
             mainPage.render();
           } catch (err) {
             console.error('Ошибка сохранения в IDB:', err);
-            alert('Ошибка при сохранении модели');
           }
         } else {
           console.error('Функция addModelToDB не найдена');
-          alert('Ошибка: база данных не доступна');
         }
       };
 
