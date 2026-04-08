@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "express-documents-api",
+		"name": "Express Documents API",
+		"description": "Коллекция для тестирования REST API документов на Express.js",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Получить все документы",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/documents",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents"]
+				},
+				"description": "Получение всех документов из базы данных"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Поиск документов по названию",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/documents?title=Техническое",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents"],
+					"query": [
+						{
+							"key": "title",
+							"value": "Техническое",
+							"description": "Поиск по названию (регистронезависимый)"
+						}
+					]
+				},
+				"description": "Поиск документов по части названия"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Получить документ по ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/documents/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents", "1"]
+				},
+				"description": "Получение конкретного документа по ID"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Создать новый документ",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"src\": \"https://cdn-icons-png.flaticon.com/512/337/337946.png\",\n  \"title\": \"Новый документ.pdf\",\n  \"text\": \"Документ доступен для чтения и скачивания. Последнее изменение: сегодня.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/documents",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents"]
+				},
+				"description": "Создание нового документа. ID генерируется автоматически."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Обновить документ",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Обновленный документ.pdf\",\n  \"text\": \"Доступ ограничен. Только для отдела разработки.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/documents/2",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents", "2"]
+				},
+				"description": "Частичное обновление документа. Можно передать только те поля, которые нужно изменить."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Удалить документ",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/documents/4",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents", "4"]
+				},
+				"description": "Удаление документа по ID. Возвращает статус 204 No Content при успехе."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Тест 404 - Несуществующий документ",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/documents/999",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents", "999"]
+				},
+				"description": "Проверка обработки ошибки 404 при запросе несуществующего документа"
+			},
+			"response": []
+		},
+		{
+			"name": "8. Тест 400 - Невалидные данные",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Только название\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/documents",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["documents"]
+				},
+				"description": "Проверка валидации - создание документа с неполными данными должно вернуть 400 Bad Request"
+			},
+			"response": []
+		},
+		{
+			"name": "9. Тест 404 - Несуществующий маршрут",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/nonexistent",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["nonexistent"]
+				},
+				"description": "Проверка глобальной обработки 404 для несуществующих маршрутов"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
