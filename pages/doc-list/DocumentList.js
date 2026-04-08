@@ -2,6 +2,8 @@ import { DocumentCardComponent } from '../../components/doc-card/DocumentCard.js
 import { DocumentPage } from '../doc-detail/Document.js';
 import { AddDocButton } from '../../components/add-doc-button/AddDocButton.js';
 import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFilterbar.js';
+import { areTagsIdentical } from '../../utils/helpers/tagSearcher.js';
+import { merge } from '../../utils/helpers/merger.js';
 
 export class DocumentListPage {
   constructor(parent) {
@@ -23,7 +25,7 @@ export class DocumentListPage {
                 <div id="add-btn-toolbar-container" class="ms-3"></div>
             </div>
 
-            <div id="main-page" class="d-flex flex-wrap gap-3 mt-3"></div>
+            <div id="main-page" class="d-flex flex-wrap gap-3 mt-3 align-items-start"></div>
         </div>
     `;
   }
@@ -34,19 +36,22 @@ export class DocumentListPage {
         id: 1,
         src: 'static/img/docx.png',
         title: 'РПЗ.docx',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        text: 'LOREM IPSUM DOLOR SIT AMET...',
+        tags: ['отчет', 'программирование', '2026'],
       },
       {
         id: 2,
         src: 'static/img/pdf.png',
         title: 'Титул КР БД.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        text: 'LOREM IPSUM DOLOR SIT AMET...',
+        tags: ['базы данных', 'курсовая', 'sql'],
       },
       {
         id: 3,
         src: 'static/img/pdf.png',
         title: 'ИУ5-41Б_Паронько_ТЗ_2026.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET LOREM IPSUM DOLOR SIT AMET',
+        text: 'LOREM IPSUM DOLOR SIT AMET...',
+        tags: ['тз', 'техническое задание', '2026'],
       },
     ];
   }
@@ -90,8 +95,21 @@ export class DocumentListPage {
     const displayData = this.getFilteredData();
 
     displayData.forEach((item) => {
+      // Системный слой с дефолтными значениями
+      const systemLayer = {
+        size: '128 KB',
+        owner: 'iu5-student',
+        created: '07.04.2026',
+        title: 'БЕЗЫМЯННЫЙ_ДОКУМЕНТ', // Будет проигнорирован, если title уже есть
+        text: 'Текст документа отсутствует',
+        src: 'static/img/default.png',
+      };
+
+      // Смешиваем данные: item имеет приоритет над systemLayer
+      const cardData = merge(item, systemLayer);
+
       const card = new DocumentCardComponent(container);
-      card.render(item, this.clickCard.bind(this), (id) => this.deleteCard(id));
+      card.render(cardData, this.clickCard.bind(this), (id) => this.deleteCard(id));
     });
   }
 
@@ -100,7 +118,10 @@ export class DocumentListPage {
       const firstCard = { ...this.docCardsData[0] };
 
       firstCard.id = Date.now();
-      firstCard.title = `${firstCard.title}`;
+      firstCard.title = `Копия - ${firstCard.title}`;
+
+      // Добавляем теги для копии
+      firstCard.tags = [...(firstCard.tags || []), 'копия'];
 
       this.docCardsData.push(firstCard);
 
@@ -115,15 +136,28 @@ export class DocumentListPage {
 
   getFilteredData() {
     return this.docCardsData.filter((item) => {
-      // 1. Поиск (приводим всё к нижнему регистру для честности)
-      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      // 2. Фильтрация по расширению
-      // Предполагаем, что расширение — это всё, что после точки
+      // 1. Фильтр по расширению
       const extension = item.title.split('.').pop().toLowerCase();
       const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
 
-      return matchesSearch && matchesFilter;
+      // 2. Если строка поиска пустая — только фильтр по расширению
+      if (!this.searchQuery.trim()) return matchesFilter;
+
+      // 3. Подготовка поисковых тегов
+      const searchTags = this.searchQuery
+        .toLowerCase()
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t !== '');
+
+      // 4. Проверка полного совпадения тегов
+      const matchesTags = areTagsIdentical(item.tags || [], searchTags);
+
+      // 5. Проверка вхождения в название
+      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+      // 6. Итоговая фильтрация
+      return matchesFilter && (matchesTags || matchesSearch);
     });
   }
 }
