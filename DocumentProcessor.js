@@ -172,7 +172,7 @@ window.onload = function() {
 
             for (let i = 0; i < 5; ++i) {
                 if (accessMask & flagValue) {
-                    grantedRights.push(documentAccessLevels[i]);s
+                    grantedRights.push(documentAccessLevels[i]);
                 }
 
                 flagValue = flagValue << 1;
