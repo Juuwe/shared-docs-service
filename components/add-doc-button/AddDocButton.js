@@ -5,18 +5,10 @@ export class AddDocButton {
 
   getHTML() {
     return `
-            <div class="d-flex justify-content-center align-items-center"
-                 id="add-doc-button"
-                 style="width: 230px; height: 320px; cursor: pointer; background: transparent;">
-
-                <div class="d-flex justify-content-center align-items-center shadow"
-                     style="width: 60px; height: 60px; background: #000; border-radius: 50%; transition: transform 0.2s ease;">
-
-                    <i class="bi bi-plus-lg" style="font-size: 2rem; color: #fff;"></i>
-
-                </div>
-            </div>
-        `;
+      <button id="add-doc-button" class="btn btn-primary border-0" style="background-color: #b4dc19; color: black">
+        <i class="bi bi-plus-circle me-2"></i>Добавить документ
+      </button>
+    `;
   }
 
   render(listener) {

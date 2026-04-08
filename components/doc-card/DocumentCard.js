@@ -11,8 +11,8 @@ export class DocumentCardComponent {
         <div class="card border-0 rounded-0 product-card" id="card-${data.id}"
              style="width: 230px; background: #f5f3f0; overflow: hidden; display: flex; flex-direction: column;">
 
-            <div class="card-body d-flex justify-content-center align-items-center" style="height: 280px; flex-grow: 1;">
-                <div class="shadow-sm p-2" style="width: 160px; height: 220px; background: white; border: 1px solid #eee; overflow: hidden;">
+            <div class="card-body d-flex justify-content-center align-items-center p-0" style="height: 280px; flex-grow: 1;">
+                <div class="shadow-sm p-2" style="width: 170px; height: 230px; background: white; border: 1px solid #eee; overflow: hidden;">
                     <div style="font-size: 4px; line-height: 6px; color: #ccc; text-align: left;">
                         ${'LOREM IPSUM DOLOR SIT AMET '.repeat(60)}
                     </div>
@@ -39,11 +39,11 @@ export class DocumentCardComponent {
     const html = this.getHTML(docData);
     this.parent.insertAdjacentHTML('beforeend', html);
 
-    const frwdBtnContainer = docData.getElementById(`btn-container-${docData.id}`);
+    const frwdBtnContainer = document.getElementById(`btn-container-${docData.id}`);
     const frwdBtn = new FrwDocDetailBtn(frwdBtnContainer);
     frwdBtn.render({ id: docData.id, text: 'Перейти' }, forwardListener);
 
-    const delBtnContainer = docData.getElementById(`delete-container-${docData.id}`);
+    const delBtnContainer = document.getElementById(`delete-container-${docData.id}`);
     const delBtn = new DeleteDocButton(delBtnContainer);
     delBtn.render(docData.id, deleteListener);
   }

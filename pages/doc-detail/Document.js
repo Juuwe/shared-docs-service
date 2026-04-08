@@ -1,6 +1,6 @@
 import { DocumentComponent } from '../../components/document/document.js';
-import { DocumentHeaderComponent } from '../../components/document/document-header.js';
-import { BackButtonComponent } from '../../components/back-button/index.js';
+import { DocumentHeaderComponent } from '../../components/document/doc-header.js';
+import { BackDocListButton } from '../../components/back-list-button/BackDocListButton.js';
 import { DocumentListPage } from '../doc-list/DocumentList.js';
 
 export class DocumentPage {
@@ -27,16 +27,21 @@ export class DocumentPage {
 
   getHTML() {
     return `
-            <div id="document-page-root" class="container mt-4">
-                <div id="back-btn-container" class="mb-3"></div>
-                <div id="doc-header-container"></div>
-                <div id="document-container"></div>
-            </div>
-        `;
+      <div id="document-page-root" class="container py-4" style="max-width: 1200px;">
+        <div id="back-btn-container" class="mb-2"></div>
+
+        <div class="card shadow-sm border-0 rounded-0 overflow-hidden">
+          <div class="card-body p-4 p-lg-5">
+            <div id="doc-header-container" class="mb-4 pb-3"></div>
+            <div id="document-container"></div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   clickBack() {
-    document.body.style.backgroundColor = 'white'
+    document.body.style.backgroundColor = 'white';
     const mainPage = new DocumentListPage(this.parent);
     mainPage.render();
   }
@@ -49,16 +54,15 @@ export class DocumentPage {
     this.parent.insertAdjacentHTML('beforeend', html);
 
     const backBtnContainer = document.getElementById('back-btn-container');
-    const backBtn = new BackButtonComponent(backBtnContainer);
+    const backBtn = new BackDocListButton(backBtnContainer);
     backBtn.render(this.clickBack.bind(this));
 
     const data = this.getData();
-    const currentDocData = data.find(item => item.id == this.id);
+    const currentDocData = data.find((item) => item.id == this.id);
 
     const docHeaderContainer = document.getElementById('doc-header-container');
     const docHeader = new DocumentHeaderComponent(docHeaderContainer);
     docHeader.render(currentDocData);
-
 
     const docContainer = document.getElementById('document-container');
     const doc = new DocumentComponent(docContainer);

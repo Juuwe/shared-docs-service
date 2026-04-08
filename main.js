@@ -1,4 +1,4 @@
-import { MainPage } from "./pages/doc-list/DocumentList.js";
+import { DocumentListPage } from "./pages/doc-list/DocumentList.js";
 import { HeaderComponent } from './components/header/header.js';
 
 
@@ -30,5 +30,5 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-const mainPage = new MainPage(root);
+const mainPage = new DocumentListPage(root);
 mainPage.render();
