@@ -8,7 +8,7 @@ import { merge } from '../../utils/helpers/merger.js';
 export class DocumentListPage {
   constructor(parent) {
     this.parent = parent;
-    this.docCardsData = this.getData();
+    this.docCardsData = [];
     this.searchQuery = '';
     this.filterExtension = 'all';
   }
@@ -28,32 +28,6 @@ export class DocumentListPage {
             <div id="main-page" class="d-flex flex-wrap gap-3 mt-3 align-items-start"></div>
         </div>
     `;
-  }
-
-  getData() {
-    return [
-      {
-        id: 1,
-        src: 'static/img/docx.png',
-        title: 'РПЗ.docx',
-        text: 'LOREM IPSUM DOLOR SIT AMET...',
-        tags: ['отчет', 'программирование', '2026'],
-      },
-      {
-        id: 2,
-        src: 'static/img/pdf.png',
-        title: 'Титул КР БД.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET...',
-        tags: ['базы данных', 'курсовая', 'sql'],
-      },
-      {
-        id: 3,
-        src: 'static/img/pdf.png',
-        title: 'ИУ5-41Б_Паронько_ТЗ_2026.pdf',
-        text: 'LOREM IPSUM DOLOR SIT AMET...',
-        tags: ['тз', 'техническое задание', '2026'],
-      },
-    ];
   }
 
   clickCard(e) {
@@ -85,7 +59,10 @@ export class DocumentListPage {
     const addButton = new AddDocButton(addBtnContainer);
     addButton.render(this.addCopyOfFirstCard.bind(this));
 
-    this.renderCards();
+    window.getData().then((data) => {
+      this.docCardsData = data;
+      this.renderCards();
+    });
   }
 
   renderCards() {
@@ -95,17 +72,16 @@ export class DocumentListPage {
     const displayData = this.getFilteredData();
 
     displayData.forEach((item) => {
-      // Системный слой с дефолтными значениями
+
       const systemLayer = {
-        size: '128 KB',
+        size: item.is3D ? '3D Model' : '128 KB',
         owner: 'iu5-student',
         created: '07.04.2026',
-        title: 'БЕЗЫМЯННЫЙ_ДОКУМЕНТ', // Будет проигнорирован, если title уже есть
+        title: 'БЕЗЫМЯННЫЙ_ДОКУМЕНТ',
         text: 'Текст документа отсутствует',
-        src: 'static/img/default.png',
+        src: item.is3D ? 'static/img/pdf.png' : 'static/img/docx.png'
       };
 
-      // Смешиваем данные: item имеет приоритет над systemLayer
       const cardData = merge(item, systemLayer);
 
       const card = new DocumentCardComponent(container);
@@ -120,7 +96,6 @@ export class DocumentListPage {
       firstCard.id = Date.now();
       firstCard.title = `Копия - ${firstCard.title}`;
 
-      // Добавляем теги для копии
       firstCard.tags = [...(firstCard.tags || []), 'копия'];
 
       this.docCardsData.push(firstCard);
@@ -136,27 +111,23 @@ export class DocumentListPage {
 
   getFilteredData() {
     return this.docCardsData.filter((item) => {
-      // 1. Фильтр по расширению
+
       const extension = item.title.split('.').pop().toLowerCase();
       const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
 
-      // 2. Если строка поиска пустая — только фильтр по расширению
       if (!this.searchQuery.trim()) return matchesFilter;
 
-      // 3. Подготовка поисковых тегов
       const searchTags = this.searchQuery
         .toLowerCase()
         .split(',')
         .map((t) => t.trim())
         .filter((t) => t !== '');
 
-      // 4. Проверка полного совпадения тегов
+
       const matchesTags = areTagsIdentical(item.tags || [], searchTags);
 
-      // 5. Проверка вхождения в название
       const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
 
-      // 6. Итоговая фильтрация
       return matchesFilter && (matchesTags || matchesSearch);
     });
   }

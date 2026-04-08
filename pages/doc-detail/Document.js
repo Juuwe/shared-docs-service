@@ -2,6 +2,7 @@ import { DocumentComponent } from '../../components/document/document.js';
 import { DocumentHeaderComponent } from '../../components/document/doc-header.js';
 import { BackDocListButton } from '../../components/back-list-button/BackDocListButton.js';
 import { DocumentListPage } from '../doc-list/DocumentList.js';
+import { ThreeComponent } from '../../components/three/ThreeComponent.js';
 
 export class DocumentPage {
   constructor(parent, id) {
@@ -11,18 +12,6 @@ export class DocumentPage {
 
   get pageRoot() {
     return document.getElementById('document-page-root');
-  }
-
-  getData() {
-    return [
-      {
-        id: 1,
-        src: 'static/img/docx.png',
-        title: 'РПЗ.docx',
-        text: 'Содержание пояснительной записки...',
-      },
-      { id: 2, src: 'static/img/pdf.png', title: 'Титул.pdf', text: 'Текст титульного листа...' },
-    ];
   }
 
   getHTML() {
@@ -57,15 +46,22 @@ export class DocumentPage {
     const backBtn = new BackDocListButton(backBtnContainer);
     backBtn.render(this.clickBack.bind(this));
 
-    const data = this.getData();
-    const currentDocData = data.find((item) => item.id == this.id);
+    getData().then((data) => {
+      const currentDocData = data.find((item) => item.id == this.id);
 
-    const docHeaderContainer = document.getElementById('doc-header-container');
-    const docHeader = new DocumentHeaderComponent(docHeaderContainer);
-    docHeader.render(currentDocData);
+      const docHeaderContainer = document.getElementById('doc-header-container');
+      const docHeader = new DocumentHeaderComponent(docHeaderContainer);
+      docHeader.render(currentDocData);
 
-    const docContainer = document.getElementById('document-container');
-    const doc = new DocumentComponent(docContainer);
-    doc.render(currentDocData);
+      const docContainer = document.getElementById('document-container');
+
+      if (currentDocData.is3D) {
+        const threeD = new ThreeComponent(docContainer);
+        threeD.render(currentDocData);
+      } else {
+        const doc = new DocumentComponent(docContainer);
+        doc.render(currentDocData);
+      }
+    });
   }
 }
