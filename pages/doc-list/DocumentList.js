@@ -54,8 +54,37 @@ export class DocumentListPage {
   clickCard(e) {
     const cardId = e.target.dataset.id;
 
-    const productPage = new DocumentPage(this.parent, cardId);
-    productPage.render();
+    const documentPage = new DocumentPage(this.parent, cardId);
+    documentPage.render();
+  }
+
+  deleteCard(id) {
+    this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
+    this.renderCards();
+  }
+
+  addCopyOfFirstCard() {
+    if (this.docCardsData.length > 0) {
+      const firstCard = { ...this.docCardsData[0] };
+
+      firstCard.id = Date.now();
+      firstCard.title = `${firstCard.title}`;
+
+      this.docCardsData.push(firstCard);
+
+      this.renderCards();
+    }
+  }
+
+  getFilteredData() {
+    return this.docCardsData.filter((item) => {
+      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+      const extension = item.title.split('.').pop().toLowerCase();
+      const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
+
+      return matchesSearch && matchesFilter;
+    });
   }
 
   render() {
@@ -92,38 +121,6 @@ export class DocumentListPage {
     displayData.forEach((item) => {
       const card = new DocumentCardComponent(container);
       card.render(item, this.clickCard.bind(this), (id) => this.deleteCard(id));
-    });
-  }
-
-  addCopyOfFirstCard() {
-    if (this.docCardsData.length > 0) {
-      const firstCard = { ...this.docCardsData[0] };
-
-      firstCard.id = Date.now();
-      firstCard.title = `${firstCard.title}`;
-
-      this.docCardsData.push(firstCard);
-
-      this.renderCards();
-    }
-  }
-
-  deleteCard(id) {
-    this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
-    this.renderCards();
-  }
-
-  getFilteredData() {
-    return this.docCardsData.filter((item) => {
-      // 1. Поиск (приводим всё к нижнему регистру для честности)
-      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      // 2. Фильтрация по расширению
-      // Предполагаем, что расширение — это всё, что после точки
-      const extension = item.title.split('.').pop().toLowerCase();
-      const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
-
-      return matchesSearch && matchesFilter;
     });
   }
 }

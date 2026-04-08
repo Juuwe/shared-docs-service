@@ -5,7 +5,7 @@ export class FrwDocDetailBtn {
 
   getHTML(data) {
     return `
-        <button class="btn btn-primary bg-dark border-0" id="click-card-${data.id}" data-id="${data.id}">Перейти</button>
+        <button class="btn btn-primary bg-dark border-0" id="click-card-${data.id}" data-id="${data.id}">Открыть</button>
     `;
   }
 
