@@ -28,7 +28,7 @@ export class DocumentListPage {
     `;
   }
 
-  getData() {
+  getData() {   
     return [
       {
         id: 1,
