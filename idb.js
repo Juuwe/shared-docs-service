@@ -38,6 +38,15 @@ const PRESETS = [
     src: 'static/img/glb.png',
     tags: ['модель', '3d', 'микросхема'],
   },
+
+  {
+    id: 7,
+    title: 'Документы.glb',
+    is3D: true,
+    modelPath: 'models/Small Stack of Paper.glb',
+    src: 'static/img/glb.png',
+    tags: ['модель', '3d', 'документы'],
+  }
 ];
 
 function getData() {
