@@ -4,23 +4,23 @@ class DocumentUrls {
     }
 
     getDocs() {
-        return `${this.baseUrl}/document`;
+        return `${this.baseUrl}/documents`;
     }
 
     getDocById(id) {
-        return `${this.baseUrl}/document/${id}`;
+        return `${this.baseUrl}/documents/${id}`;
     }
 
     createDoc() {
-        return `${this.baseUrl}/document`;
+        return `${this.baseUrl}/documents`;
     }
 
     removeDocById() {
-        return `${this.baseUrl}/document/${id}`;
+        return `${this.baseUrl}/documents/${id}`;
     }
 
     updateDocById() {
-        return `${this.baseUrl}/document/${id}`;
+        return `${this.baseUrl}/documents/${id}`;
     }
 }
 
