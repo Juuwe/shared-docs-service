@@ -1,8 +1,6 @@
 import { DocumentListPage } from "./pages/doc-list/DocumentList.js";
 import { HeaderComponent } from './components/header/header.js';
 
-
-
 const headerContainer = document.getElementById('header-container');
 const root = document.getElementById('root');
 

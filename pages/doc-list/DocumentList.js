@@ -5,6 +5,9 @@ import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFi
 import { areTagsIdentical } from '../../utils/helpers/tagSearcher.js';
 import { merge } from '../../utils/helpers/merger.js';
 
+import { ajax } from '../../modules/Ajax.js';
+import { docUrls } from '../../modules/DocumentUrls.js';
+
 export class DocumentListPage {
   constructor(parent) {
     this.parent = parent;
@@ -37,6 +40,17 @@ export class DocumentListPage {
     productPage.render();
   }
 
+  getData() {
+    ajax.get(docUrls.getDocs(), (data) => {
+      this.renderData(data);
+    });
+  }
+
+  renderData(items) {
+      this.docCardsData = items;
+      this.renderCards();
+  }
+
   render() {
     document.body.style.backgroundColor = 'white';
     this.parent.innerHTML = this.getHTML();
@@ -59,27 +73,24 @@ export class DocumentListPage {
     const addButton = new AddDocButton(addBtnContainer);
     addButton.render(this.addCopyOfFirstCard.bind(this));
 
-    window.getData().then((data) => {
-      this.docCardsData = data;
-      this.renderCards();
-    });
+    this.getData();
   }
 
   renderCards() {
     const container = this.pageRoot;
+    if (!container) return;
     container.innerHTML = '';
 
     const displayData = this.getFilteredData();
 
     displayData.forEach((item) => {
-
       const systemLayer = {
         size: item.is3D ? '3D Model' : '128 KB',
         owner: 'iu5-student',
         created: '07.04.2026',
         title: 'БЕЗЫМЯННЫЙ_ДОКУМЕНТ',
         text: 'Текст документа отсутствует',
-        src: item.is3D ? 'static/img/pdf.png' : 'static/img/docx.png'
+        src: item.is3D ? 'static/img/pdf.png' : 'static/img/docx.png',
       };
 
       const cardData = merge(item, systemLayer);
@@ -111,7 +122,6 @@ export class DocumentListPage {
 
   getFilteredData() {
     return this.docCardsData.filter((item) => {
-
       const extension = item.title.split('.').pop().toLowerCase();
       const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
 
@@ -122,7 +132,6 @@ export class DocumentListPage {
         .split(',')
         .map((t) => t.trim())
         .filter((t) => t !== '');
-
 
       const matchesTags = areTagsIdentical(item.tags || [], searchTags);
 
