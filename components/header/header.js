@@ -18,13 +18,6 @@ export class HeaderComponent {
 
           <div class="d-flex align-items-center ms-auto">
             <input type="file" id="upload-3d-model" accept=".glb" style="display: none;">
-
-            <button class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2"
-                    id="upload-btn"
-                    style="background-color: black; color: white">
-              <i class="bi bi-upload"></i>
-              <span>Загрузить 3D (.glb)</span>
-            </button>
           </div>
         </div>
       </nav>
