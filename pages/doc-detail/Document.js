@@ -1,8 +1,13 @@
 import { DocumentComponent } from '../../components/document/document.js';
 import { DocumentHeaderComponent } from '../../components/document/doc-header.js';
+import { DocumentEditPage } from '../doc-edit/DocumentEdit.js';
 import { BackDocListButton } from '../../components/back-list-button/BackDocListButton.js';
+import { EditDocButton } from '../../components/edit-doc-button/EditDocButton.js';
 import { DocumentListPage } from '../doc-list/DocumentList.js';
 import { ThreeComponent } from '../../components/three/ThreeComponent.js';
+
+import { ajax } from '../../modules/Ajax.js';
+import { docUrls } from '../../modules/DocumentUrls.js';
 
 export class DocumentPage {
   constructor(parent, id) {
@@ -17,7 +22,10 @@ export class DocumentPage {
   getHTML() {
     return `
       <div id="document-page-root" class="container py-4" style="max-width: 1200px;">
-        <div id="back-btn-container" class="mb-2"></div>
+       <div class="d-flex justify-content-between align-items-center mb-3">
+            <div id="back-btn-container"></div>
+            <div id="edit-btn-container"></div>
+        </div>
 
         <div class="card shadow-sm border-0 rounded-0 overflow-hidden">
           <div class="card-body p-4 p-lg-5">
@@ -35,6 +43,11 @@ export class DocumentPage {
     mainPage.render();
   }
 
+  clickEdit() {
+    const editPage = new DocumentEditPage(this.parent, this.id);
+    editPage.render();
+  }
+
   render() {
     document.body.style.backgroundColor = ' #f5f3f0';
 
@@ -46,21 +59,21 @@ export class DocumentPage {
     const backBtn = new BackDocListButton(backBtnContainer);
     backBtn.render(this.clickBack.bind(this));
 
-    getData().then((data) => {
-      const currentDocData = data.find((item) => item.id == this.id);
+    const editBtnContainer = document.getElementById('edit-btn-container');
+    const editBtn = new EditDocButton(editBtnContainer);
+    editBtn.render(this.clickEdit.bind(this));
+
+    ajax.get(docUrls.getDocById(this.id), (currentDocData) => {
+      if (!currentDocData) return;
 
       const docHeaderContainer = document.getElementById('doc-header-container');
-      const docHeader = new DocumentHeaderComponent(docHeaderContainer);
-      docHeader.render(currentDocData);
+      new DocumentHeaderComponent(docHeaderContainer).render(currentDocData);
 
       const docContainer = document.getElementById('document-container');
-
       if (currentDocData.is3D) {
-        const threeD = new ThreeComponent(docContainer);
-        threeD.render(currentDocData);
+        new ThreeComponent(docContainer).render(currentDocData);
       } else {
-        const doc = new DocumentComponent(docContainer);
-        doc.render(currentDocData);
+        new DocumentComponent(docContainer).render(currentDocData);
       }
     });
   }

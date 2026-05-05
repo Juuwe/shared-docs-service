@@ -1,5 +1,6 @@
 import { DocumentCardComponent } from '../../components/doc-card/DocumentCard.js';
 import { DocumentPage } from '../doc-detail/Document.js';
+import { DocumentEditPage} from '../doc-edit/DocumentEdit.js';
 import { AddDocButton } from '../../components/add-doc-button/AddDocButton.js';
 import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFilterbar.js';
 import { areTagsIdentical } from '../../utils/helpers/tagSearcher.js';
@@ -71,7 +72,11 @@ export class DocumentListPage {
 
     const addBtnContainer = document.getElementById('add-btn-toolbar-container');
     const addButton = new AddDocButton(addBtnContainer);
-    addButton.render(this.addCopyOfFirstCard.bind(this));
+
+    addButton.render(() => {
+        const docEditPage = new DocumentEditPage(this.parent);
+        docEditPage.render();
+    });
 
     this.getData();
   }
