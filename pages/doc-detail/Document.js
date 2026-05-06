@@ -48,7 +48,7 @@ export class DocumentPage {
     editPage.render();
   }
 
-  render() {
+  async render() {
     document.body.style.backgroundColor = ' #f5f3f0';
 
     this.parent.innerHTML = '';

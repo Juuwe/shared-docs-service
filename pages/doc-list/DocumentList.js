@@ -1,10 +1,11 @@
 import { DocumentCardComponent } from '../../components/doc-card/DocumentCard.js';
 import { DocumentPage } from '../doc-detail/Document.js';
-import { DocumentEditPage} from '../doc-edit/DocumentEdit.js';
+import { DocumentEditPage } from '../doc-edit/DocumentEdit.js';
 import { AddDocButton } from '../../components/add-doc-button/AddDocButton.js';
 import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFilterbar.js';
 import { areTagsIdentical } from '../../utils/helpers/tagSearcher.js';
 import { merge } from '../../utils/helpers/merger.js';
+import { ConfirmModalComponent } from '../../components/confirm-modal/ConfirmModal.js';
 
 import { ajax } from '../../modules/Ajax.js';
 import { docUrls } from '../../modules/DocumentUrls.js';
@@ -41,15 +42,17 @@ export class DocumentListPage {
     productPage.render();
   }
 
-  getData() {
-    ajax.get(docUrls.getDocs(), (data) => {
+  getData(title = '', ext = 'all') {
+    const url = `${docUrls.getDocs()}?title=${encodeURIComponent(title)}&ext=${encodeURIComponent(ext)}&tags=${encodeURIComponent(title)}`;
+
+    ajax.get(url, (data) => {
       this.renderData(data);
     });
   }
 
   renderData(items) {
-      this.docCardsData = items;
-      this.renderCards();
+    this.docCardsData = items;
+    this.renderCards();
   }
 
   render() {
@@ -59,23 +62,19 @@ export class DocumentListPage {
     const filterContainer = document.getElementById('filter-container');
     const filterbar = new DocFilterbarComponent(filterContainer);
 
-    filterbar.render(
-      (query) => {
-        this.searchQuery = query;
-        this.renderCards();
-      },
-      (ext) => {
-        this.filterExtension = ext;
-        this.renderCards();
-      }
-    );
+    filterbar.render((query, ext) => {
+      this.searchQuery = query;
+      this.filterExtension = ext;
+
+      this.getData(this.searchQuery, this.filterExtension);
+    });
 
     const addBtnContainer = document.getElementById('add-btn-toolbar-container');
     const addButton = new AddDocButton(addBtnContainer);
 
     addButton.render(() => {
-        const docEditPage = new DocumentEditPage(this.parent);
-        docEditPage.render();
+      const docEditPage = new DocumentEditPage(this.parent);
+      docEditPage.render();
     });
 
     this.getData();
@@ -86,9 +85,7 @@ export class DocumentListPage {
     if (!container) return;
     container.innerHTML = '';
 
-    const displayData = this.getFilteredData();
-
-    displayData.forEach((item) => {
+    this.docCardsData.forEach((item) => {
       const systemLayer = {
         size: item.is3D ? '3D Model' : '128 KB',
         owner: 'iu5-student',
@@ -105,44 +102,23 @@ export class DocumentListPage {
     });
   }
 
-  addCopyOfFirstCard() {
-    if (this.docCardsData.length > 0) {
-      const firstCard = { ...this.docCardsData[0] };
-
-      firstCard.id = Date.now();
-      firstCard.title = `Копия - ${firstCard.title}`;
-
-      firstCard.tags = [...(firstCard.tags || []), 'копия'];
-
-      this.docCardsData.push(firstCard);
-
-      this.renderCards();
-    }
-  }
-
   deleteCard(id) {
-    this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
-    this.renderCards();
-  }
+    const doc = this.docCardsData.find(item => item.id === id);
 
-  getFilteredData() {
-    return this.docCardsData.filter((item) => {
-      const extension = item.title.split('.').pop().toLowerCase();
-      const matchesFilter = this.filterExtension === 'all' || extension === this.filterExtension;
+    const confirmModal = new ConfirmModalComponent(document.body);
 
-      if (!this.searchQuery.trim()) return matchesFilter;
-
-      const searchTags = this.searchQuery
-        .toLowerCase()
-        .split(',')
-        .map((t) => t.trim())
-        .filter((t) => t !== '');
-
-      const matchesTags = areTagsIdentical(item.tags || [], searchTags);
-
-      const matchesSearch = item.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      return matchesFilter && (matchesTags || matchesSearch);
-    });
+    confirmModal.render(
+      {
+        title: 'Подтверждение удаления',
+        message: `Вы уверены, что хотите удалить <strong>${doc.title}</strong>?`,
+      },
+      () => {
+        const url = `${docUrls.getDocs()}/${id}`;
+        ajax.delete(url, () => {
+          this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
+          this.renderCards();
+        });
+      }
+    );
   }
 }

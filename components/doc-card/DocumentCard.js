@@ -1,6 +1,8 @@
 import { FrwDocDetailBtn } from '../frwd-detail-button/ForwardDocButton.js';
 import { DeleteDocButton } from '../del-doc-button/DeleteDocButton.js';
 
+import { docUrls } from '../../modules/DocumentUrls.js';
+
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
@@ -11,8 +13,10 @@ export class DocumentCardComponent {
 
   getHTML(data) {
     const tagsHtml =
-      data.tags && data.tags.length > 0
+      typeof data.tags === 'string' && data.tags.trim() !== ''
         ? data.tags
+            .split(',') // Превращаем строку "тег1, тег2" в массив
+            .map((tag) => tag.trim())
             .map(
               (tag) =>
                 `<span class="badge me-1" style="background: #e9e5e0; color: #5c5c5c; font-size: 0.7rem;">${tag}</span>`
@@ -20,11 +24,15 @@ export class DocumentCardComponent {
             .join('')
         : '';
 
+    const docText = data.text || 'Нет содержимого';
+
     const previewContent = data.is3D
       ? `<canvas id="canvas-${data.id}" width="160" height="220" style="width: 160px; height: 220px; display: block;"></canvas>`
-      : `<div style="font-size: 4px; line-height: 6px; color: #ccc; text-align: left;">
-           ${'LOREM IPSUM DOLOR SIT AMET '.repeat(80)}
+      : `<div style="font-size: 5px; line-height: 7px; color: #7a7a7a; text-align: left; word-break: break-all; overflow: hidden;">
+            ${docText}
          </div>`;
+
+    const iconUrl = `${docUrls.baseUrl}/${data.src}`;
 
     return `
         <div class="card border-0 rounded-0 product-card" id="card-${data.id}"
@@ -43,7 +51,7 @@ export class DocumentCardComponent {
 
             <div class="card-footer bg-white border-top p-3">
                 <div class="d-flex align-items-center mb-1">
-                    <img src="${data.src}" width="24" height="24" class="me-2" alt="type-icon">
+                    <img src="${iconUrl}" width="24" height="24" class="me-2" alt="type-icon">
                     <h6 class="card-title text-truncate mb-0" style="font-size: 0.9rem; font-weight: 600;" title="${data.title}">
                         ${data.title}
                     </h6>
