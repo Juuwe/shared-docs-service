@@ -63,18 +63,21 @@ export class DocumentPage {
     const editBtn = new EditDocButton(editBtnContainer);
     editBtn.render(this.clickEdit.bind(this));
 
-    ajax.get(docUrls.getDocById(this.id), (currentDocData) => {
-      if (!currentDocData) return;
+    const currentDocData = await ajax.get(docUrls.getDocById(this.id));
 
-      const docHeaderContainer = document.getElementById('doc-header-container');
-      new DocumentHeaderComponent(docHeaderContainer).render(currentDocData);
+    if (!currentDocData) {
+      console.error('Документ не найден');
+      return;
+    }
 
-      const docContainer = document.getElementById('document-container');
-      if (currentDocData.is3D) {
-        new ThreeComponent(docContainer).render(currentDocData);
-      } else {
-        new DocumentComponent(docContainer).render(currentDocData);
-      }
-    });
+    const docHeaderContainer = document.getElementById('doc-header-container');
+    new DocumentHeaderComponent(docHeaderContainer).render(currentDocData);
+
+    const docContainer = document.getElementById('document-container');
+    if (currentDocData.is3D) {
+      new ThreeComponent(docContainer).render(currentDocData);
+    } else {
+      new DocumentComponent(docContainer).render(currentDocData);
+    }
   }
 }

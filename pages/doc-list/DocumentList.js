@@ -42,12 +42,13 @@ export class DocumentListPage {
     productPage.render();
   }
 
-  getData(title = '', ext = 'all') {
+  async getData(title = '', ext = 'all') {
     const url = `${docUrls.getDocs()}?title=${encodeURIComponent(title)}&ext=${encodeURIComponent(ext)}&tags=${encodeURIComponent(title)}`;
 
-    ajax.get(url, (data) => {
-      this.renderData(data);
-    });
+    const data = await ajax.get(url);
+    if (data) {
+        this.renderData(data);
+    }
   }
 
   renderData(items) {
@@ -112,12 +113,14 @@ export class DocumentListPage {
         title: 'Подтверждение удаления',
         message: `Вы уверены, что хотите удалить <strong>${doc.title}</strong>?`,
       },
-      () => {
-        const url = `${docUrls.getDocs()}/${id}`;
-        ajax.delete(url, () => {
+      async () => {
+        const url = docUrls.removeDocById(id);
+        const success = await ajax.delete(url);
+
+        if (success) {
           this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
           this.renderCards();
-        });
+        }
       }
     );
   }

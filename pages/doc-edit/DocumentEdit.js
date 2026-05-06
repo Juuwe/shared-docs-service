@@ -4,13 +4,13 @@ import { DocumentListPage } from '../doc-list/DocumentList.js';
 import { BackDocListButton } from '../../components/back-list-button/BackDocListButton.js';
 
 export class DocumentEditPage {
-    constructor(parent, id = null) {
-        this.parent = parent;
-        this.id = id; // Если id есть — редактирование, если нет — добавление
-    }
+  constructor(parent, id = null) {
+    this.parent = parent;
+    this.id = id; // Если id есть — редактирование, если нет — добавление
+  }
 
-    getHTML() {
-        return `
+  getHTML() {
+    return `
             <div id="document-page-root" class="container py-4" style="max-width: 1200px;">
                 <div id="back-btn-container" class="mb-3"></div>
 
@@ -47,37 +47,62 @@ export class DocumentEditPage {
                         </div>
 
                         <div class="mt-4 pt-3 border-top text-end">
-                            <span class="badge text-secondary fw-normal italic" style="font-size: 0.75rem;">
-                                <i class="bi bi-info-circle me-1"></i> Сохранение будет доступно в Лабораторной работе №6
-                            </span>
+                            <button id="save-btn" class="btn btn-dark w-100 rounded-pill mt-3 shadow-sm">
+                                Сохранить документ
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
-    }
+  }
 
-    render() {
-        document.body.style.backgroundColor = '#f5f3f0';
-        this.parent.innerHTML = this.getHTML();
+  async render() {
+    document.body.style.backgroundColor = '#f5f3f0';
+    this.parent.innerHTML = this.getHTML();
 
-        // Кнопка назад
-        const backBtnContainer = document.getElementById('back-btn-container');
-        const backBtn = new BackDocListButton(backBtnContainer);
-        backBtn.render(() => {
-            const mainPage = new DocumentListPage(this.parent);
-            mainPage.render();
+    const backBtnContainer = document.getElementById('back-btn-container');
+    const backBtn = new BackDocListButton(backBtnContainer);
+    backBtn.render(() => {
+      const mainPage = new DocumentListPage(this.parent);
+      mainPage.render();
+    });
+
+    document.getElementById('save-btn').onclick = async () => {
+    const payload = {
+        title: document.getElementById('input-title').value,
+        text: document.getElementById('input-text').value,
+        tags: document.getElementById('input-tags').value, // если бэкенд ждет строку
+        src: "/img/docx.png"
+    };
+
+    const method = this.id ? 'PATCH' : 'POST';
+    const url = this.id ? `/documents/${this.id}` : '/documents';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
         });
 
-        // Если передан ID, загружаем существующие данные
-        if (this.id) {
-            ajax.get(docUrls.getDocById(this.id), (data) => {
-                if (data) {
-                    document.getElementById('input-title').value = data.title || '';
-                    document.getElementById('input-text').value = data.text || '';
-                    document.getElementById('input-tags').value = (data.tags || []).join(', ');
-                }
-            });
+        if (response.ok) {
+            new DocumentListPage(this.parent).render();
         }
+    } catch (e) {
+        console.error("Ошибка при сохранении:", e);
     }
+};
+
+    if (this.id) {
+      const data = await ajax.get(docUrls.getDocById(this.id));
+      if (data) {
+        document.getElementById('input-title').value = data.title || '';
+        document.getElementById('input-text').value = data.text || '';
+        document.getElementById('input-tags').value = Array.isArray(data.tags)
+          ? data.tags.join(', ')
+          : data.tags || '';
+      }
+    }
+  }
 }

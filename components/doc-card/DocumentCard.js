@@ -32,7 +32,7 @@ export class DocumentCardComponent {
             ${docText}
          </div>`;
 
-    const iconUrl = `${docUrls.baseUrl}/${data.src}`;
+    const iconUrl = `${data.src}`;
 
     return `
         <div class="card border-0 rounded-0 product-card" id="card-${data.id}"

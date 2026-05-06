@@ -1,26 +1,26 @@
 class DocumentUrls {
     constructor() {
-        this.baseUrl = 'http://localhost:3000';
+        this.baseUrl = '';
     }
 
     getDocs() {
-        return `${this.baseUrl}/documents`;
+        return `/documents`;
     }
 
     getDocById(id) {
-        return `${this.baseUrl}/documents/${id}`;
+        return `/documents/${id}`;
     }
 
     createDoc() {
-        return `${this.baseUrl}/documents`;
+        return `/documents`;
     }
 
-    removeDocById() {
-        return `${this.baseUrl}/documents/${id}`;
+    removeDocById(id) {
+        return `/documents/${id}`;
     }
 
-    updateDocById() {
-        return `${this.baseUrl}/documents/${id}`;
+    updateDocById(id) {
+        return `/documents/${id}`;
     }
 }
 
