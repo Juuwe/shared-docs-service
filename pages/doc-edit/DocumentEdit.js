@@ -69,30 +69,29 @@ export class DocumentEditPage {
     });
 
     document.getElementById('save-btn').onclick = async () => {
-    const payload = {
+      const payload = {
         title: document.getElementById('input-title').value,
         text: document.getElementById('input-text').value,
-        tags: document.getElementById('input-tags').value, // если бэкенд ждет строку
-        src: "/img/docx.png"
-    };
+        tags: document.getElementById('input-tags').value,
+      };
 
-    const method = this.id ? 'PATCH' : 'POST';
-    const url = this.id ? `/documents/${this.id}` : '/documents';
+      const method = this.id ? 'PATCH' : 'POST';
+      const url = this.id ? `/documents/${this.id}` : '/documents';
 
-    try {
+      try {
         const response = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
-            new DocumentListPage(this.parent).render();
+          new DocumentListPage(this.parent).render();
         }
-    } catch (e) {
-        console.error("Ошибка при сохранении:", e);
-    }
-};
+      } catch (e) {
+        console.error('Ошибка при сохранении:', e);
+      }
+    };
 
     if (this.id) {
       const data = await ajax.get(docUrls.getDocById(this.id));

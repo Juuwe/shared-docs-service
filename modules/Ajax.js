@@ -32,7 +32,7 @@ class Ajax {
             console.error(`Ошибка: ${response.status}`);
             return null;
         }
-        // Для DELETE 204 No Content возвращает пустой body
+
         if (response.status === 204) return true;
         return await response.json();
     }
