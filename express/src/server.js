@@ -14,15 +14,25 @@ docsService.init(DATA_FILE_PATH);
 
 // 1. Встроенный middleware для парсинга JSON
 app.use(express.json());
-
 // 2. Логирующий middleware
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
+app.use(express.static(path.join(__dirname, 'dist')));
+
 // 3. Подключение маршрутов (теперь по адресу /documents)
 app.use('/documents', docsRouter);
+
+app.get(/^.*$/, (req, res, next) => {
+    // Если запрос был к API, пропускаем дальше к глобальному обработчику 404
+    if (req.url.startsWith('/documents')) {
+        return next();
+    }
+    // Для всех остальных GET-запросов отдаем главный HTML-файл бандла
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 // 4. Глобальная обработка 404
 app.use((req, res) => {
