@@ -3,7 +3,7 @@ export class DeleteDocButton {
     this.parent = parent;
   }
 
-  // В методичке данные (id) прокидываются в строку для создания уникального ID элемента
+
   getHTML(id) {
     return `
             <button class="btn btn-link text-danger p-0"
@@ -14,7 +14,7 @@ export class DeleteDocButton {
         `;
   }
 
-  // Стандартный метод из методички: рендер, вставка, навешивание слушателя
+
   render(id, listener) {
     const html = this.getHTML(id);
     this.parent.insertAdjacentHTML('beforeend', html);
