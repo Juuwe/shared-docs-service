@@ -97,7 +97,6 @@ export class DocumentEditPage {
         });
 
         if (this.id) {
-            // Убрали деструктуризацию. data — это и есть твой документ
             const data = await ajax.get(docUrls.getDocById(this.id));
 
             if (data) {
