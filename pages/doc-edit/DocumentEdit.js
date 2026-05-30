@@ -80,7 +80,7 @@ export class DocumentEditPage {
             const payload = {
                 title: document.getElementById('input-title').value.trim() || 'Без названия',
                 text: document.getElementById('input-text').value.trim(),
-                src: srcValue, // Передаем путь как есть
+                src: srcValue,
                 tags: tagsArray.length > 0 ? tagsArray : ['документ']
             };
 

@@ -19,12 +19,12 @@ export class DocumentCardComponent {
     let previewContent = '';
     const srcPath = (data.src || '').toLowerCase();
 
-    // ИСПРАВЛЕНИЕ: Логика иконки. Если это модель, ставим дефолтную иконку glb, иначе берем src.
+
     let iconUrl = data.src || 'static/img/docx.png';
 
     if (srcPath.endsWith('.glb')) {
         previewContent = `<canvas id="canvas-${data.id}" width="160" height="220" style="width: 160px; height: 220px; display: block;"></canvas>`;
-        iconUrl = 'static/img/glb.png'; // Заглушка для иконки 3D модели
+        iconUrl = 'static/img/glb.png';
     }
     else if (srcPath.endsWith('.png') || srcPath.endsWith('.jpg') || srcPath.endsWith('.jpeg') || srcPath.endsWith('.webp')) {
         previewContent = `<img src="${data.src}" alt="Preview" style="width: 100%; height: 100%; object-fit: contain;">`;
@@ -69,7 +69,7 @@ export class DocumentCardComponent {
     const html = this.getHTML(docData);
     this.parent.insertAdjacentHTML('beforeend', html);
 
-    // ИСПРАВЛЕНИЕ: Проверяем не только флаг, но и расширение файла
+
     const isModel = docData.is3D || (docData.src && docData.src.toLowerCase().endsWith('.glb'));
     if (isModel) {
       this.init3DPreview(docData);
@@ -129,7 +129,7 @@ export class DocumentCardComponent {
     } else if (data.buffer) {
       loader.parse(data.buffer, '', (gltf) => processSingleModel(gltf, 0));
     } else if (data.modelPath || data.src) {
-      // ИСПРАВЛЕНИЕ: Читаем путь из src, если modelPath отсутствует
+
       const pathToLoad = data.modelPath || data.src;
       loader.load(pathToLoad, (gltf) => processSingleModel(gltf, 0));
     }
