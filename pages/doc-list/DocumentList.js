@@ -105,23 +105,13 @@ export class DocumentListPage {
 
   deleteCard(id) {
     const doc = this.docCardsData.find(item => item.id === id);
+    if (!doc) return;
 
-    const confirmModal = new ConfirmModalComponent(document.body);
+    const url = `${docUrls.getDocs()}/${id}`;
 
-    confirmModal.render(
-      {
-        title: 'Подтверждение удаления',
-        message: `Вы уверены, что хотите удалить <strong>${doc.title}</strong>?`,
-      },
-      async () => {
-        const url = docUrls.removeDocById(id);
-        const success = await ajax.delete(url);
-
-        if (success) {
-          this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
-          this.renderCards();
-        }
-      }
-    );
+    ajax.delete(url, () => {
+      this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
+      this.renderCards();
+    });
   }
 }

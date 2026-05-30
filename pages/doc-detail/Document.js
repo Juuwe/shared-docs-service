@@ -74,9 +74,30 @@ export class DocumentPage {
     new DocumentHeaderComponent(docHeaderContainer).render(currentDocData);
 
     const docContainer = document.getElementById('document-container');
-    if (currentDocData.is3D) {
+
+    // 1. Получаем путь и проверяем расширение
+    const srcPath = (currentDocData.src || '').toLowerCase();
+
+    // Поддержка как старых записей (с флагом), так и новых (по расширению)
+    const isModel = currentDocData.is3D || srcPath.endsWith('.glb');
+
+    if (isModel) {
+      // ИСПРАВЛЕНИЕ: ThreeComponent ожидает путь в modelPath.
+      // Если его нет, копируем из src, чтобы не ломать чужой код.
+      if (!currentDocData.modelPath) {
+          currentDocData.modelPath = currentDocData.src;
+      }
       new ThreeComponent(docContainer).render(currentDocData);
-    } else {
+    }
+    else if (srcPath.endsWith('.png') || srcPath.endsWith('.jpg') || srcPath.endsWith('.jpeg') || srcPath.endsWith('.webp')) {
+      // ИСПРАВЛЕНИЕ ДЛЯ КАРТИНОК: Если это 2D-картинка, DocumentComponent просто выведет текст.
+      // Давайте динамически вставим тег img перед текстом документа, чтобы превью работало и на детальной странице.
+      const imageHtml = `<div class="text-center mb-4"><img src="${currentDocData.src}" alt="Image Preview" style="max-width: 100%; max-height: 500px; border-radius: 8px;"></div>`;
+      currentDocData.text = imageHtml + (currentDocData.text || '');
+      new DocumentComponent(docContainer).render(currentDocData);
+    }
+    else {
+      // Обычный текстовый документ
       new DocumentComponent(docContainer).render(currentDocData);
     }
   }
