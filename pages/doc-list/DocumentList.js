@@ -5,7 +5,6 @@ import { AddDocButton } from '../../components/add-doc-button/AddDocButton.js';
 import { DocFilterbarComponent } from '../../components/doc-filterbar/DocumentFilterbar.js';
 import { areTagsIdentical } from '../../utils/helpers/tagSearcher.js';
 import { merge } from '../../utils/helpers/merger.js';
-import { ConfirmModalComponent } from '../../components/confirm-modal/ConfirmModal.js';
 
 import { ajax } from '../../modules/Ajax.js';
 import { docUrls } from '../../modules/DocumentUrls.js';
@@ -104,21 +103,13 @@ export class DocumentListPage {
 
   deleteCard(id) {
     const doc = this.docCardsData.find(item => item.id === id);
+    if (!doc) return;
 
-    const confirmModal = new ConfirmModalComponent(document.body);
+    const url = `${docUrls.getDocs()}/${id}`;
 
-    confirmModal.render(
-      {
-        title: 'Подтверждение удаления',
-        message: `Вы уверены, что хотите удалить <strong>${doc.title}</strong>?`,
-      },
-      () => {
-        const url = `${docUrls.getDocs()}/${id}`;
-        ajax.delete(url, () => {
-          this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
-          this.renderCards();
-        });
-      }
-    );
+    ajax.delete(url, () => {
+      this.docCardsData = this.docCardsData.filter((card) => card.id !== id);
+      this.renderCards();
+    });
   }
 }
